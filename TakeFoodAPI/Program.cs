@@ -1,8 +1,6 @@
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
-using System;
-using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,7 +46,7 @@ void ConfigureLogs()
 
     Log.Logger = new LoggerConfiguration()
            .Enrich.FromLogContext()
-           .Enrich.WithExceptionDetails() 
+           .Enrich.WithExceptionDetails()
            .WriteTo.Debug()
            .WriteTo.Console()
            .WriteTo.Elasticsearch(ConfigureELK(configuration, env))
