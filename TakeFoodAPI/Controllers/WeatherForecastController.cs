@@ -21,6 +21,7 @@ namespace TakeFoodAPI.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            _logger.LogInformation("GetWeatherForecast  Get - this is a nice message a test the logs", DateTime.UtcNow);
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
