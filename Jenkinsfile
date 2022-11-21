@@ -14,13 +14,33 @@
 //     }
 // }
 
-void setBuildStatus(String message, String state) {
+void setBuildFailStatus() {
     step([
       $class: 'GitHubCommitStatusSetter',
       reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
+      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build Failed', state: 'failure']] ]
+  ])
+}
+
+void setBuildSuccessStatus() {
+    step([
+      $class: 'GitHubCommitStatusSetter',
+      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
+      contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+      errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
+      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build complete', state: 'success']] ]
+  ])
+}
+
+void setBuildPendingStatus() {
+    step([
+      $class: 'GitHubCommitStatusSetter',
+      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
+      contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+      errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
+      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Peding', state: 'success']] ]
   ])
 }
 
@@ -35,7 +55,7 @@ pipeline {
         stage('Git Checkout') {
             steps {
                 cleanWs()
-                setBuildStatus('Pending', 'pending')
+                setBuildPendingStatus()
                 git branch: 'develop', credentialsId: 'f255f29b-bccc-42e1-ad60-ef7c56881dda', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
             }
         }
@@ -64,10 +84,10 @@ pipeline {
     }
     post {
         failure {
-            setBuildStatus('Build Failed', 'failure')
+            setBuildFailStatus()
         }
         success {
-            setBuildStatus('Build complete', 'success')
+            setBuildSuccessStatus()
         }
     }
 }
