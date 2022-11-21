@@ -6,7 +6,7 @@ void setBuildStatus(String message, String context, String state) {
         sh """
             set -x
             curl \"https://api.github.com/repos/org/repo/statuses/$GIT_COMMIT" \
-                -v -H \"Authorization: token $TOKEN\"
+                -v -H \"Authorization: Bearer $TOKEN\"
                 -H \"Content-Type: application/json\" \
                 -X POST \
                 -d \"{\\\"description\\\": \\\"$message\\\", \\\"state\\\": \\\"$state\\\", \\\"context\\\": \\\"$context\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}\"
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     try{
-                        sh
+                        sh "echo ${env:BUILD_NUMBER}"
                         setBuildStatus("Compiling", "compile", "pending");
                         sh "dotnet build"
                         sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
