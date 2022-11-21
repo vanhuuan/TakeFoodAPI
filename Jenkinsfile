@@ -35,6 +35,7 @@ pipeline {
         stage('Git Checkout') {
             steps {
                 cleanWs()
+                setBuildStatus('Pending', 'pending')
                 git branch: 'develop', credentialsId: 'f255f29b-bccc-42e1-ad60-ef7c56881dda', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
             }
         }
@@ -66,7 +67,6 @@ pipeline {
             setBuildStatus('Build Failed', 'failure')
         }
         success {
-            sh "echo ${env.BUILD_NUMBER}"
             setBuildStatus('Build complete', 'success')
         }
     }
