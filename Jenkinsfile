@@ -15,13 +15,13 @@
 // }
 
 void setBuildStatus(String message, String state) {
-  step([
+    step([
       $class: 'GitHubCommitStatusSetter',
       reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
       statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
-  ]);
+  ])
 }
 
 pipeline {
@@ -41,13 +41,9 @@ pipeline {
         stage('Build and publish pack') {
             steps {
                 script {
-                    try {
-                        sh "echo ${env:BUILD_NUMBER}"
-                        sh 'dotnet build'
-                        sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
-                    }catch (err) {
-                        echo "Failed: ${err}"
-                    }
+                    sh "echo ${env:BUILD_NUMBER}"
+                    sh 'dotnet build'
+                    sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
                 }
             }
         }
@@ -66,11 +62,11 @@ pipeline {
         }
     }
     post {
-        success {
-            setBuildStatus("Build complete", "success");
-        }
         failure {
-            setBuildStatus("Build Failed", "failure");
+            setBuildStatus('Build Failed', 'failure')
+        }
+        success {
+            setBuildStatus('Build complete', 'success')
         }
     }
 }
