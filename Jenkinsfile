@@ -1,46 +1,10 @@
-// void setBuildStatus(String message, String context, String state) {
-//     // add a Github access token as a global 'secret text' credential on Jenkins with the id 'github-commit-status-token'
-//     withCredentials([string(credentialsId: 'takefoodapi-github', variable: 'TOKEN')]) {
-//         // 'set -x' for debugging. Don't worry the access token won't be actually logged
-//         // Also, the sh command actually executed is not properly logged, it will be further escaped when written to the log
-//         sh """
-//             set -x
-//             curl \"https://api.github.com/repos/vanhuuan89/TakeFoodAPI/statuses/$GIT_COMMIT" \
-//                 -v -H \"Authorization: Bearer $TOKEN\"
-//                 -H \"Accept: application/vnd.github+json\" \
-//                 -X POST \
-//                 -d \"{\\\"description\\\": \\\"$message\\\", \\\"state\\\": \\\"$state\\\", \\\"context\\\": \\\"$context\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}\"
-//         """
-//     }
-// }
-
-void setBuildFailStatus() {
+void setBuildStatus(String message, String state) {
     step([
       $class: 'GitHubCommitStatusSetter',
       reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build Failed', state: 'failure']] ]
-  ])
-}
-
-void setBuildSuccessStatus() {
-    step([
-      $class: 'GitHubCommitStatusSetter',
-      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
-      contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
-      errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build complete', state: 'success']] ]
-  ])
-}
-
-void setBuildPendingStatus() {
-    step([
-      $class: 'GitHubCommitStatusSetter',
-      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/vanhuuan89/TakeFoodAPI.git'],
-      contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
-      errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Peding', state: 'success']] ]
+      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
   ])
 }
 
@@ -55,7 +19,7 @@ pipeline {
         stage('Git Checkout') {
             steps {
                 cleanWs()
-                setBuildPendingStatus()
+                setBuildStatus('pending', 'pending')
                 git branch: 'develop', credentialsId: 'f255f29b-bccc-42e1-ad60-ef7c56881dda', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
             }
         }
@@ -84,10 +48,10 @@ pipeline {
     }
     post {
         failure {
-            setBuildFailStatus()
+            setBuildStatus('Build Failed', 'failure')
         }
         success {
-            setBuildSuccessStatus()
+            setBuildStatus('Build complete', 'success')
         }
     }
 }
