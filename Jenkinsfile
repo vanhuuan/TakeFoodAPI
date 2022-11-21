@@ -5,7 +5,7 @@ void setBuildStatus(String message, String context, String state) {
       // Also, the sh command actually executed is not properly logged, it will be further escaped when written to the log
         sh """
             set -x
-            curl \"https://api.github.com/repos/org/repo/statuses/$GIT_COMMIT" \
+            curl \"https://api.github.com/repos/vanhuuan89/TakeFoodAPI/statuses/$GIT_COMMIT" \
                 -v -H \"Authorization: Bearer $TOKEN\"
                 -H \"Content-Type: application/json\" \
                 -X POST \
