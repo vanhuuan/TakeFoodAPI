@@ -1,6 +1,6 @@
 void setBuildStatus(String message, String context, String state) {
   // add a Github access token as a global 'secret text' credential on Jenkins with the id 'github-commit-status-token'
-    withCredentials([string(credentialsId: 'github-commit-status-token', variable: 'TOKEN')]) {
+    withCredentials([string(credentialsId: 'f255f29b-bccc-42e1-ad60-ef7c56881dda', variable: 'TOKEN')]) {
       // 'set -x' for debugging. Don't worry the access token won't be actually logged
       // Also, the sh command actually executed is not properly logged, it will be further escaped when written to the log
         sh """
@@ -27,10 +27,11 @@ pipeline {
                 git branch: 'develop', credentialsId: 'f255f29b-bccc-42e1-ad60-ef7c56881dda', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
             }
         }
-        stage('Build and publish package') {
+        stage('Build and publish pack') {
             steps {
                 script {
                     try{
+                        sh
                         setBuildStatus("Compiling", "compile", "pending");
                         sh "dotnet build"
                         sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
