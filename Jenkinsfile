@@ -17,7 +17,7 @@ void setBuildStatus(String message, String context, String state) {
 pipeline {
     agent any
     environment {
-        NEXUSKEY = "bar"
+        NEXUSKEY = "b3d2e853-339a-3b0d-b046-04dd841df65a"
         NEXUSURL = "http://20.92.240.52:8081/repository/nuget-hosted"
     }
 
