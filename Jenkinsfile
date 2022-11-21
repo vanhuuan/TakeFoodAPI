@@ -33,12 +33,12 @@ pipeline {
                 script {
                     try{
                         sh "echo ${env:BUILD_NUMBER}"
-                        setBuildStatus("Compiling", "compile", "pending");
+                        // setBuildStatus("Compiling", "compile", "pending");
                         sh "dotnet build"
                         sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
-                        setBuildStatus("Build complete", "compile", "success");
+                        // setBuildStatus("Build complete", "compile", "success");
                     }catch(err) {
-                        setBuildStatus("Failed", "pl-compile", "failure");
+                        // setBuildStatus("Failed", "pl-compile", "failure");
                         echo "Failed: ${err}"
                     }
                 }
