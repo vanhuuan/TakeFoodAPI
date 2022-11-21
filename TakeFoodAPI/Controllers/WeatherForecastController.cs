@@ -18,7 +18,7 @@ namespace TakeFoodAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecas")]
+        [HttpGet(Name = "Weather")]
         public IEnumerable<WeatherForecast> Get()
         {
             _logger.LogInformation("GetWeatherForecast  Get - this is a nice message a test the logs", DateTime.UtcNow);
