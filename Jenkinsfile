@@ -66,6 +66,7 @@ pipeline {
             setBuildStatus('Build Failed', 'failure')
         }
         success {
+            sh "echo ${env.BUILD_NUMBER}"
             setBuildStatus('Build complete', 'success')
         }
     }
