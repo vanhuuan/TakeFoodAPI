@@ -34,4 +34,15 @@ public class UserViewDto
     /// </summary>
     [JsonPropertyName("roles")]
     public IList<string> Roles { get; set; }
+    /// <summary>
+    /// Photo
+    /// </summary>
+    [JsonPropertyName("accessToken")]
+    public string? AccessToken { get; set; }
+
+    /// <summary>
+    /// Photo
+    /// </summary>
+    [JsonPropertyName("refreshToken")]
+    public string? RefreshToken { get; set; }
 }
