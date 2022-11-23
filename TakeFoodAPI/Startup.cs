@@ -3,6 +3,8 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using System.Diagnostics;
+using System.Text.Json;
 using TakeFoodAPI.Extension;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Category;
@@ -16,9 +18,10 @@ using TakeFoodAPI.Model.Entities.Topping;
 using TakeFoodAPI.Model.Entities.User;
 using TakeFoodAPI.Model.Entities.Voucher;
 using TakeFoodAPI.Model.Entities.WorkTime;
+using TakeFoodAPI.Model.Repository;
+using TakeFoodAPI.Service;
+using TakeFoodAPI.Service.Implement;
 using TakeFoodAPI.Settings;
-using System.Diagnostics;
-using System.Text.Json;
 
 namespace TakeFoodAPI;
 
@@ -144,6 +147,7 @@ public class Startup
         services.AddMongoRepository<Food>(appSetting.NoSQL.Collections.Food);
         services.AddMongoRepository<Category>(appSetting.NoSQL.Collections.Category);
         services.AddMongoRepository<Address>(appSetting.NoSQL.Collections.Address);
+        services.AddMongoRepository<UserAddress>(appSetting.NoSQL.Collections.UserAddress);
         services.AddMongoRepository<Image>(appSetting.NoSQL.Collections.Image);
         services.AddMongoRepository<StoreCategory>(appSetting.NoSQL.Collections.StoreCategory);
         services.AddMongoRepository<Topping>(appSetting.NoSQL.Collections.Topping);
@@ -153,6 +157,10 @@ public class Startup
         services.AddMongoRepository<Order>(appSetting.NoSQL.Collections.Order);
         services.AddMongoRepository<Voucher>(appSetting.NoSQL.Collections.Voucher);
 
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAddressService, AddressService>();
+        services.AddScoped<IJwtService, JwtService>(x => new JwtService(x.GetRequiredService<IMongoRepository<UserRefreshToken>>()
+           , appSetting.JwtConfig.Secret, appSetting.JwtConfig.Secret2, appSetting.JwtConfig.ExpirationInHours, appSetting.JwtConfig.ExpirationInMonths));
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(

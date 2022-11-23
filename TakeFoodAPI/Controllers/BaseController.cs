@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace AuthenticationService.Controllers;
+namespace TakeFoodAPI.Controllers;
 
 /// <summary>
 /// Base controller

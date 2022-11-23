@@ -1,8 +1,8 @@
-﻿using AuthenticationService.Model.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using TakeFoodAPI.Model.Entities;
 
-namespace AuthenticationService.Middleware;
+namespace TakeFoodAPI.Middleware;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeAttribute : Attribute, IAuthorizationFilter

@@ -1,8 +1,8 @@
-﻿using AuthenticationService.Service;
+﻿using TakeFoodAPI.Service;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace AuthenticationService.Middleware;
+namespace TakeFoodAPI.Middleware;
 
 public class AuthenticationMiddleware
 {

@@ -1,11 +1,10 @@
-﻿using AuthenticationService.Model.Content;
-using AuthenticationService.Service;
-using AuthenticationService.ViewModel.Dtos;
-using AuthenticationService.ViewModel.Dtos.User;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using TakeFoodAPI.Service;
+using TakeFoodAPI.ViewModel.Dtos;
+using TakeFoodAPI.ViewModel.Dtos.User;
 
-namespace AuthenticationService.Controllers;
+namespace TakeFoodAPI.Controllers;
 
 
 public class AuthenController : Controller
@@ -16,14 +15,12 @@ public class AuthenController : Controller
     public IUserService UserService { get; set; }
 
     public IJwtService JwtService { get; set; }
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-    public IMailService MailService { get; set; }
-
-    public AuthenController(IUserService userService, IJwtService jwtService, IMailService mailService)
+    public AuthenController(IUserService userService, IJwtService jwtService)
     {
         UserService = userService;
         JwtService = jwtService;
-        MailService = mailService;
     }
 
     [HttpPost]
@@ -43,15 +40,16 @@ public class AuthenController : Controller
             }
 
             var accessToken = JwtService.GenerateSecurityToken(rs.Id, rs.Roles);
-            var mail = new MailContent();
-            mail.Subject = "Take Food Activation Email";
-            mail.To = user.Email;
-            mail.Body = url + "Active?token=" + accessToken;
-            await MailService.SendMail(mail);
+            /*            var mail = new MailContent();
+                        mail.Subject = "Take Food Activation Email";
+                        mail.To = user.Email;
+                        mail.Body = url + "Active?token=" + accessToken;
+                        await MailService.SendMail(mail);*/
             return Ok();
         }
         catch (Exception e)
         {
+            log.Error(e);
             return BadRequest(e.Message);
         }
     }
@@ -80,6 +78,7 @@ public class AuthenController : Controller
         }
         catch (Exception e)
         {
+            log.Error(e);
             Console.WriteLine(e.ToString());
             return BadRequest(e.Message);
         }
@@ -104,6 +103,7 @@ public class AuthenController : Controller
         }
         catch (Exception e)
         {
+            log.Error(e);
             return BadRequest(e.Message);
         }
     }
@@ -119,6 +119,7 @@ public class AuthenController : Controller
         }
         catch (Exception e)
         {
+            log.Error(e);
             return BadRequest(e.Message);
         }
     }
