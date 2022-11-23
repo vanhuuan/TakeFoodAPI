@@ -40,7 +40,7 @@ pipeline {
         stage('Devployment') {
             steps {
                 sh 'sudo systemctl stop takefood'
-                sh 'sudo rm -r /var/www/TakeFoodAPI/'
+                sh 'sudo rm -r /var/www/TakeFoodAPI/*'
                 sh 'dotnet publish --configuration Release -o /var/www/TakeFoodAPI'
                 sh 'sudo systemctl start takefood'
             }
