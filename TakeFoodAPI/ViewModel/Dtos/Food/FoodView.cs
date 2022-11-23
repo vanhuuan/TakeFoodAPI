@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using TakeFoodAPI.ViewModel.Dtos.Topping;
 
 namespace TakeFoodAPI.ViewModel.Dtos.Food
 {
@@ -22,7 +23,7 @@ namespace TakeFoodAPI.ViewModel.Dtos.Food
         public string Category { get; set; }
 
         [JsonPropertyName("ListTopping")]
-        public List<String> ListTopping { get; set; }
+        public List<ToppingFood> ListTopping { get; set; }
 
         [JsonPropertyName("State")]
         public String State { get; set; }
