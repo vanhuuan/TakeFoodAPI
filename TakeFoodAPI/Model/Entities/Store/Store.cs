@@ -6,7 +6,7 @@ namespace TakeFoodAPI.Model.Entities.Store;
 /// <summary>
 /// Store
 /// </summary>
-public class Store:ModelMongoDB
+public class Store : ModelMongoDB
 {
     /// <summary>
     /// Category's name
@@ -48,5 +48,10 @@ public class Store:ModelMongoDB
     /// </summary>
     [BsonElement("taxId")]
     public string TaxId { get; set; }
-
+    [BsonElement("STK")]
+    public string STK { get; set; }
+    [BsonElement("email")]
+    public string email { get; set; }
+    [BsonElement("cmnd")]
+    public string? CMND { get; set; }
 }
