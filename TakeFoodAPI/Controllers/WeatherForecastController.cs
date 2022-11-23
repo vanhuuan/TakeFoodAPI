@@ -11,18 +11,16 @@ namespace TakeFoodAPI.Controllers
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Hot", "Sweltering", "Scorching"
     };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
-        {
-            _logger = logger;
-        }
 
         [HttpGet(Name = "Weather")]
         public IEnumerable<WeatherForecast> Get()
         {
-            _logger.LogInformation("GetWeatherForecast  Get - this is a nice message a test the logs", DateTime.UtcNow);
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+
+            log.Error("GetWeatherForecast  Get - this is a nice message a test the logs");
+            log.Info("THis is log info");
+            return Enumerable.Range(1, 10).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = 10,
