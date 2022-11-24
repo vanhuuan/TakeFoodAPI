@@ -11,6 +11,7 @@ namespace TakeFoodAPI.Controllers
     public class StoreController : BaseController
     {
         private ITakeFoodAPI _TakeFoodAPI;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public StoreController(ITakeFoodAPI TakeFoodAPI)
         {
@@ -25,10 +26,12 @@ namespace TakeFoodAPI.Controllers
             try
             {
                 await _TakeFoodAPI.CreateStore(OwnerID, store);
+                log.Info("Create Store successfully");
                 return Ok();
             }
             catch (Exception err)
             {
+                log.Error(err.Message);
                 return BadRequest(err.Message);
             }
         }
@@ -91,11 +94,12 @@ namespace TakeFoodAPI.Controllers
             try
             {
                 var store = await _TakeFoodAPI.GetStoreDetailAsync(storeId, lat, lng);
-
+                log.Info("Get details store by id");
                 return Ok(store);
             }
             catch (Exception err)
             {
+                log.Error(err.Message);
                 return BadRequest(err.Message);
             }
         }
