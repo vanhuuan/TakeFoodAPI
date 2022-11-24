@@ -11,10 +11,19 @@ namespace TakeFoodAPI.Controllers
     public class FoodController : BaseController
     {
         private IFoodService _FoodService;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public FoodController(IFoodService foodService)
         {
             _FoodService = foodService;
+        }
+
+        [HttpGet]
+        [Route("test")]
+        public void Test()
+        {
+            log.Error("GetWeatherForecast  Get - this is a nice message a test the logs");
+            log.Info("THis is log info");
         }
 
         [HttpPost("{StoreID}")]
