@@ -22,6 +22,7 @@ namespace TakeFoodAPI.Controllers
         [Route("test")]
         public void Test()
         {
+            Console.WriteLine("123");
             log.Error("GetWeatherForecast  Get - this is a nice message a test the logs");
             log.Info("THis is log info");
         }
