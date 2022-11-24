@@ -159,6 +159,10 @@ public class Startup
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAddressService, AddressService>();
+        services.AddScoped<IFoodService, FoodService>();
+        services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<IToppingService, ToppingService>();
+        services.AddScoped<ITakeFoodAPI, TakeFoodAPI.Service.Implement.TakeFoodAPI>();
         services.AddScoped<IJwtService, JwtService>(x => new JwtService(x.GetRequiredService<IMongoRepository<UserRefreshToken>>()
            , appSetting.JwtConfig.Secret, appSetting.JwtConfig.Secret2, appSetting.JwtConfig.ExpirationInHours, appSetting.JwtConfig.ExpirationInMonths));
         services.AddCors(options =>
