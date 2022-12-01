@@ -5,6 +5,8 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using System.Diagnostics;
 using System.Text.Json;
+using TakeFood.UserOrder.Service.Implement;
+using TakeFood.UserOrder.Service;
 using TakeFoodAPI.Extension;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Category;
@@ -162,6 +164,7 @@ public class Startup
         services.AddScoped<IFoodService, FoodService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IToppingService, ToppingService>();
+        services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<ITakeFoodAPI, TakeFoodAPI.Service.Implement.TakeFoodAPI>();
         services.AddScoped<IJwtService, JwtService>(x => new JwtService(x.GetRequiredService<IMongoRepository<UserRefreshToken>>()
            , appSetting.JwtConfig.Secret, appSetting.JwtConfig.Secret2, appSetting.JwtConfig.ExpirationInHours, appSetting.JwtConfig.ExpirationInMonths));
