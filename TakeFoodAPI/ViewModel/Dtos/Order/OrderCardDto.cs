@@ -1,4 +1,4 @@
-﻿namespace TakeFood.UserOrder.ViewModel.Dtos.Order;
+﻿namespace TakeFoodAPI.ViewModel.Dtos;
 
 public class OrderCardDto
 {
