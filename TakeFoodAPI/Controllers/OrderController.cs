@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TakeFood.UserOrder.Service;
-using TakeFood.UserOrder.ViewModel.Dtos;
-using TakeFoodAPI.Controllers;
 using TakeFoodAPI.Service;
+using TakeFoodAPI.ViewModel.Dtos.Order;
 
-namespace TakeFood.UserOrder.Controllers;
+namespace TakeFoodAPI.Controllers;
 
 public class OrderController : BaseController
 {
@@ -39,10 +37,6 @@ public class OrderController : BaseController
     public string GetId()
     {
         String token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()!;
-        return JwtService.GetId(token);
-    }
-    public string GetId(string token)
-    {
         return JwtService.GetId(token);
     }
 }

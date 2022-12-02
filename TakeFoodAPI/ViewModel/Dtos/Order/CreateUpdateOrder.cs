@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace TakeFood.UserOrder.ViewModel.Dtos;
+namespace TakeFoodAPI.ViewModel.Dtos.Order;
 
 public class CreateOrderDto
 {

@@ -5,8 +5,6 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using System.Diagnostics;
 using System.Text.Json;
-using TakeFood.UserOrder.Service.Implement;
-using TakeFood.UserOrder.Service;
 using TakeFoodAPI.Extension;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Category;
@@ -158,8 +156,11 @@ public class Startup
         services.AddMongoRepository<Review>(appSetting.NoSQL.Collections.Review);
         services.AddMongoRepository<Order>(appSetting.NoSQL.Collections.Order);
         services.AddMongoRepository<Voucher>(appSetting.NoSQL.Collections.Voucher);
+        services.AddMongoRepository<ToppingOrder>(appSetting.NoSQL.Collections.ToppingOrder);
+        services.AddMongoRepository<FoodOrder>(appSetting.NoSQL.Collections.FoodOrder);
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IVoucherService, VouchersService>();
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IFoodService, FoodService>();
         services.AddScoped<IImageService, ImageService>();

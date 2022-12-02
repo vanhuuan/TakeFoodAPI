@@ -1,4 +1,6 @@
-﻿namespace StoreService.Model.Entities.Store;
+﻿using TakeFoodAPI.Model.Entities;
+
+namespace StoreService.Model.Entities.Store;
 
 public class StoreCategory:ModelMongoDB
 {
