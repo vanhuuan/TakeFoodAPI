@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using TakeFoodAPI.Service;
 using TakeFoodAPI.ViewModel.Dtos.Order;
 
@@ -27,6 +28,63 @@ public class OrderController : BaseController
             }*/
             await OrderService.CreateOrderAsync(dto, GetId());
             return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpPut]
+    [Route("CancelOrder")]
+    public async Task<IActionResult> CancelOrderAsync([Required] string orderId)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            await OrderService.CancelOrderAsync(orderId, GetId());
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("GetOrders")]
+    public async Task<IActionResult> GetOrdersAsync([Required] int index)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var rs = await OrderService.GetUserOrders(GetId(), index);
+            return Ok(rs);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("GetOrderdetail")]
+    public async Task<IActionResult> GetOrderDetailAsync([Required] string orderId)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var rs = await OrderService.GetOrderDetail(GetId(), orderId);
+            return Ok(rs);
         }
         catch (Exception e)
         {
