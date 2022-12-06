@@ -9,6 +9,10 @@
 
   <ItemGroup>
 		<PackageReference Include="log4net" Version="2.0.15" />
+		<PackageReference Include="Sentry" Version="3.24.0" />
+		<PackageReference Include="Sentry.AspNetCore" Version="3.24.0" />
+		<PackageReference Include="Sentry.Log4Net" Version="3.24.0" />
+		<PackageReference Include="Sentry.Maui" Version="3.24.0-preview.3" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
 		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />

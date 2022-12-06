@@ -1,8 +1,10 @@
+using Sentry;
 using TakeFoodAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container.   
+
 
 Startup startup = new(builder.Environment);
 startup.ConfigureServices(builder.Services);
@@ -10,7 +12,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 startup.Configure(app);
 // Configure the HTTP request pipeline.
