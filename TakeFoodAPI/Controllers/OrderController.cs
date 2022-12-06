@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel.DataAnnotations;
+using TakeFoodAPI.Hubs;
 using TakeFoodAPI.Service;
 using TakeFoodAPI.ViewModel.Dtos.Order;
 
@@ -9,10 +11,12 @@ public class OrderController : BaseController
 {
     public IOrderService OrderService { get; set; }
     public IJwtService JwtService { get; set; }
-    public OrderController(IOrderService orderService, IJwtService jwtService)
+    private readonly IHubContext<NotificationHub> notificationUserHubContext;
+    public OrderController(IOrderService orderService, IJwtService jwtService, IHubContext<NotificationHub> hubContext)
     {
         OrderService = orderService;
         JwtService = jwtService;
+        notificationUserHubContext = hubContext;
     }
 
     [HttpPost]
@@ -85,6 +89,29 @@ public class OrderController : BaseController
             }
             var rs = await OrderService.GetOrderDetail(GetId(), orderId);
             return Ok(rs);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("Notify")]
+    public async Task<IActionResult> NotifyOrderStateChangeAsync([Required] string orderId)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var rs = await OrderService.GetNotifyInfo(orderId);
+            foreach (var connectionId in NotificationHub._connections.GetConnections(rs.UserId))
+            {
+                await notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", rs.Header, rs.Message);
+            }
+            return Ok();
         }
         catch (Exception e)
         {
