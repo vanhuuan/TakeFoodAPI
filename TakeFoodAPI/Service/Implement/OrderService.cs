@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using TakeFood.UserOrder.ViewModel.Dtos;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Food;
 using TakeFoodAPI.Model.Entities.Store;
@@ -209,5 +210,42 @@ public class OrderService : IOrderService
         }
         order.Sate = "Canceled";
         await orderRepository.UpdateAsync(order);
+    }
+
+    public async Task<NotifyDto> GetNotifyInfo(string storeId)
+    {
+        var order = await orderRepository.FindByIdAsync(storeId);
+        if (order == null)
+        {
+            throw new Exception("Order's not exist");
+        }
+        string message = "Cửa hàng đã xác nhận";
+        switch (order.Sate)
+        {
+            case "Processing":
+                {
+                    message = "Cửa hàng đã xác nhận";
+                    break;
+                }
+            case "Delivering":
+                {
+                    message = "Đơn hàng đã sẵn sàng để giao/ lấy";
+                    break;
+                }
+            case "Delivered":
+                {
+                    message = "Đơn hàng đã hoàn tất";
+                    break;
+                }
+            default: message = "Đơn hàng đã cập nhật trạng thái"; break;
+        }
+
+        var dto = new NotifyDto()
+        {
+            UserId = order.UserId,
+            Header = "Cập nhật trạng thái đơn hàng",
+            Message = message
+        };
+        return dto;
     }
 }

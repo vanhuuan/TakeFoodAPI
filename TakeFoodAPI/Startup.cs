@@ -6,6 +6,7 @@ using MongoDB.Bson.Serialization.Serializers;
 using System.Diagnostics;
 using System.Text.Json;
 using TakeFoodAPI.Extension;
+using TakeFoodAPI.Hubs;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Category;
 using TakeFoodAPI.Model.Entities.Food;
@@ -181,6 +182,7 @@ public class Startup
                 }
             );
         });
+        services.AddSignalR();
     }
 
     /// <summary>
@@ -210,7 +212,11 @@ public class Startup
             {
                 endpoints.MapControllers();
             });
-
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/notifysocket");
+            });
         }
         catch (Exception ex)
         {

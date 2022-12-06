@@ -1,4 +1,5 @@
 ﻿
+using TakeFood.UserOrder.ViewModel.Dtos;
 using TakeFoodAPI.ViewModel.Dtos;
 using TakeFoodAPI.ViewModel.Dtos.Order;
 
@@ -10,4 +11,5 @@ public interface IOrderService
     Task CancelOrderAsync(String orderId, string userId);
     Task<List<OrderCardDto>> GetUserOrders(string userId, int index);
     Task<OrderDetailDto> GetOrderDetail(string userId, string orderId);
+    Task<NotifyDto> GetNotifyInfo(string storeId);
 }
