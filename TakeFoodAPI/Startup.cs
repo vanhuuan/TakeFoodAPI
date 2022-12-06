@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using Sentry.AspNetCore;
 using System.Diagnostics;
 using System.Text.Json;
 using TakeFoodAPI.Extension;
@@ -43,6 +44,7 @@ public class Startup
                 .AddEnvironmentVariables("APPSETTING_");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+
         }
         catch (Exception ex)
         {
@@ -71,6 +73,7 @@ public class Startup
         }
         return env.EnvironmentName;
     }
+
 
     /// <summary>
     /// Configuration
@@ -178,6 +181,13 @@ public class Startup
             );
         });
     }
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+    Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webBuilder =>
+        {
+            // Add the following line:
+            webBuilder.UseSentry();
+        });
 
     /// <summary>
     /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sentry;
 using System.ComponentModel.DataAnnotations;
 using TakeFoodAPI.Middleware;
 using TakeFoodAPI.Service;
@@ -19,12 +20,24 @@ namespace TakeFoodAPI.Controllers
         }
 
         [HttpGet]
-        [Route("test")]
+        [Route("ObjectIsNull")]
         public void Test()
         {
-            Console.WriteLine("123");
-            log.Error("GetWeatherForecast  Get - this is a nice message a test the logs");
-            log.Info("THis is log info");
+            log.Error("object null or empty");
+        }
+
+        [HttpGet]
+        [Route("User is existed")]
+        public void Test2()
+        {
+            log.Error("User is existed");
+        }
+
+        [HttpGet]
+        [Route("InternalServer")]
+        public void Test3()
+        {
+            log.Error("Internal Server is error");
         }
 
         [HttpPost("{StoreID}")]
@@ -32,7 +45,7 @@ namespace TakeFoodAPI.Controllers
         public async Task<IActionResult> CreateFood(string StoreID, CreateFoodDto food)
         {
             await _FoodService.CreateFood(StoreID, food);
-
+            log.Info("Create Food");
             return Ok(food);
         }
 
@@ -41,7 +54,7 @@ namespace TakeFoodAPI.Controllers
         public async Task<IActionResult> UpdateFood(string FoodID, CreateFoodDto foodUpdate)
         {
             await _FoodService.UpdateFood(FoodID, foodUpdate);
-
+            log.Info("Update Food");
             return Ok();
         }
 
@@ -49,8 +62,12 @@ namespace TakeFoodAPI.Controllers
         //[Authorize(roles: Roles.ShopeOwner)]
         public async Task<IActionResult> UpdateState(string id, bool state)
         {
-            if (await _FoodService.UpdateState(id, state)) return Ok();
-
+            if (await _FoodService.UpdateState(id, state))
+            {
+                log.Info("Update State");
+                return Ok();
+            } 
+            log.Error("Food does not exist");
             return BadRequest("không tồn tại món này");
         }
 
@@ -61,10 +78,12 @@ namespace TakeFoodAPI.Controllers
             try
             {
                 var foodList = await _FoodService.GetAllFoodsByStoreID(StoreID);
+                log.Info("Get All Food By Store");
                 return Ok(foodList);
             }
             catch (Exception e)
             {
+                log.Error(e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -73,6 +92,7 @@ namespace TakeFoodAPI.Controllers
         [Authorize]
         public async Task<List<FoodView>> GetAllFoodByCategory(string CategoryID)
         {
+            log.Info("Get All Food By Category");
             return await _FoodService.GetAllFoodsByCategory(CategoryID);
         }
 
@@ -84,11 +104,13 @@ namespace TakeFoodAPI.Controllers
             {
                 FoodViewMobile fMoble = await _FoodService.GetFoodByID(FoodID);
                 var food = new JsonResult(fMoble);
+                log.Info("Get Food View Mobile");
                 return food;
             }
             catch (Exception e)
             {
                 JsonResult error = new(e.Message);
+                log.Error(e.Message);
                 return error;
             }
         }

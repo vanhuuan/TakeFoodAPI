@@ -44,11 +44,13 @@ namespace TakeFoodAPI.Controllers
             try
             {
                 var list = await _TakeFoodAPI.GetStoreNearByAsync(dto);
+                log.Info("Get Store Near By");
                 return list;
             }
             catch (Exception err)
             {
                 Console.WriteLine(err.Message);
+                log.Error(err.Message);
                 throw;
             }
         }
@@ -65,6 +67,7 @@ namespace TakeFoodAPI.Controllers
             }
             catch (Exception err)
             {
+                log.Error(err.Message);
                 return BadRequest(err.Message);
             }
         }
@@ -77,11 +80,12 @@ namespace TakeFoodAPI.Controllers
             try
             {
                 var list = await _TakeFoodAPI.FindStoreByNameAsync(name, lat, lng, start);
-
+                log.Info("Find Store");
                 return Ok(list);
             }
             catch (Exception err)
             {
+                log.Error(err.Message);
                 return BadRequest(err.Message);
             }
         }
