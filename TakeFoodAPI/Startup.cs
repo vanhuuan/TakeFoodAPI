@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using Sentry.AspNetCore;
 using System.Diagnostics;
 using System.Text.Json;
 using TakeFoodAPI.Extension;
+using TakeFoodAPI.Hubs;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Category;
 using TakeFoodAPI.Model.Entities.Food;
@@ -44,7 +44,6 @@ public class Startup
                 .AddEnvironmentVariables("APPSETTING_");
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-
         }
         catch (Exception ex)
         {
@@ -73,7 +72,6 @@ public class Startup
         }
         return env.EnvironmentName;
     }
-
 
     /// <summary>
     /// Configuration
@@ -159,12 +157,16 @@ public class Startup
         services.AddMongoRepository<Review>(appSetting.NoSQL.Collections.Review);
         services.AddMongoRepository<Order>(appSetting.NoSQL.Collections.Order);
         services.AddMongoRepository<Voucher>(appSetting.NoSQL.Collections.Voucher);
+        services.AddMongoRepository<ToppingOrder>(appSetting.NoSQL.Collections.ToppingOrder);
+        services.AddMongoRepository<FoodOrder>(appSetting.NoSQL.Collections.FoodOrder);
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IVoucherService, VouchersService>();
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IFoodService, FoodService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IToppingService, ToppingService>();
+        services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<ITakeFoodAPI, TakeFoodAPI.Service.Implement.TakeFoodAPI>();
         services.AddScoped<IJwtService, JwtService>(x => new JwtService(x.GetRequiredService<IMongoRepository<UserRefreshToken>>()
            , appSetting.JwtConfig.Secret, appSetting.JwtConfig.Secret2, appSetting.JwtConfig.ExpirationInHours, appSetting.JwtConfig.ExpirationInMonths));
@@ -180,14 +182,8 @@ public class Startup
                 }
             );
         });
+        services.AddSignalR();
     }
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(webBuilder =>
-        {
-            // Add the following line:
-            webBuilder.UseSentry();
-        });
 
     /// <summary>
     /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -216,7 +212,11 @@ public class Startup
             {
                 endpoints.MapControllers();
             });
-
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/notifysocket");
+            });
         }
         catch (Exception ex)
         {

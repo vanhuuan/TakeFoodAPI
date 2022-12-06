@@ -6,6 +6,7 @@ public class Order : ModelMongoDB
     public string StoreId { get; set; }
     public string PhoneNumber { get; set; }
     public string AddressId { get; set; }
+    public string Note { get; set; }
     public DateTime ReceiveTime { get; set; }
     public string Sate { get; set; }
     public string PaymentMethod { get; set; }
