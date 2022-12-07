@@ -22,8 +22,8 @@ namespace TakeFoodAPI.Controllers
         [Route("test")]
         public void Test()
         {
-            log.Error("GetWeatherForecast  Get - this is a nice message a test the logs");
-            log.Info("THis is log info");
+            log.Error("Food Not Found");
+            log.Info("This is log info");
         }
 
         [HttpPost("{StoreID}")]
@@ -31,6 +31,7 @@ namespace TakeFoodAPI.Controllers
         public async Task<IActionResult> CreateFood(string StoreID, CreateFoodDto food)
         {
             await _FoodService.CreateFood(StoreID, food);
+            log.Info("Create Food " + food.Name);
 
             return Ok(food);
         }
@@ -40,6 +41,7 @@ namespace TakeFoodAPI.Controllers
         public async Task<IActionResult> UpdateFood(string FoodID, CreateFoodDto foodUpdate)
         {
             await _FoodService.UpdateFood(FoodID, foodUpdate);
+            log.Info("Update Food " + foodUpdate.Name);
 
             return Ok();
         }
@@ -64,6 +66,7 @@ namespace TakeFoodAPI.Controllers
             }
             catch (Exception e)
             {
+                log.Error(e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -87,6 +90,7 @@ namespace TakeFoodAPI.Controllers
             }
             catch (Exception e)
             {
+                log.Error(e.Message);
                 JsonResult error = new(e.Message);
                 return error;
             }

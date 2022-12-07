@@ -67,6 +67,7 @@ public class AuthenController : Controller
             var rs = await UserService.SignIn(user);
             if (rs == null)
             {
+                log.Error("Wrong username or password");
                 throw new Exception("Wrong user name or password");
             }
             var refreshToken = JwtService.GenerateRefreshToken(rs.Id);
