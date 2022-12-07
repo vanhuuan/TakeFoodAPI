@@ -11,8 +11,8 @@ void setBuildStatus(String message, String state) {
 pipeline {
     agent any
     environment {
-        NEXUSKEY = 'b3d2e853-339a-3b0d-b046-04dd841df65a'
-        NEXUSURL = 'http://20.92.240.52:8081/repository/nuget-hosted'
+        NEXUSKEY = '7cddf6c9-6328-30ff-9927-3f903fbf86f0'
+        NEXUSURL = 'http://20.205.40.63:8081/repository/nuget-hosted'
     }
 
     stages {
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 cleanWs()
                 setBuildStatus('Pending', 'PENDING')
-                git branch: 'develop', credentialsId: 'f255f29b-bccc-42e1-ad60-ef7c56881dda', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
+                git branch: 'develop', credentialsId: 'takefoodapi-github', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
             }
         }
         stage('Build and publish pack') {
