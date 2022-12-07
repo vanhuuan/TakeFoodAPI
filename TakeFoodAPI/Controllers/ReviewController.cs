@@ -9,6 +9,7 @@ namespace TakeFoodAPI.Controllers
     {
         public IReviewService ReviewService { get; set; }
         public IJwtService JwtService { get; set; }
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public ReviewController(IReviewService reviewService, IJwtService jwtService)
         {
             this.ReviewService = reviewService;
@@ -23,13 +24,16 @@ namespace TakeFoodAPI.Controllers
             {
                 if (!ModelState.IsValid)
                 {
+                    log.Error(ModelState.ErrorCount);
                     return BadRequest(ModelState.ErrorCount);
                 }
                 await ReviewService.CreateReview(dto, GetId());
+                log.Info("Create successfully");
                 return Ok();
             }
             catch (Exception e)
             {
+                log?.Error(e);
                 return BadRequest(e.Message);
             }
         }
@@ -42,13 +46,16 @@ namespace TakeFoodAPI.Controllers
             {
                 if (!ModelState.IsValid)
                 {
+                    log.Error(ModelState.IsValid);
                     return BadRequest();
                 }
                 var rs = await ReviewService.GetListReview(index, storeId);
+          
                 return Ok(rs);
             }
             catch (Exception e)
             {
+                log.Error(e);
                 return BadRequest(e.Message);
             }
         }
@@ -61,6 +68,7 @@ namespace TakeFoodAPI.Controllers
             {
                 if (!ModelState.IsValid)
                 {
+                    log.Error(ModelState.IsValid);
                     return BadRequest();
                 }
                 var rs = await ReviewService.GetUserReview(orderId, GetId());
@@ -68,6 +76,7 @@ namespace TakeFoodAPI.Controllers
             }
             catch (Exception e)
             {
+                log.Error(e);
                 return BadRequest(e.Message);
             }
         }
