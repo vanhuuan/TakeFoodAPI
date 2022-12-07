@@ -12,6 +12,7 @@ public class OrderController : BaseController
     public IOrderService OrderService { get; set; }
     public IJwtService JwtService { get; set; }
     private readonly IHubContext<NotificationHub> notificationUserHubContext;
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
     public OrderController(IOrderService orderService, IJwtService jwtService, IHubContext<NotificationHub> hubContext)
     {
         OrderService = orderService;
@@ -31,10 +32,12 @@ public class OrderController : BaseController
                 return BadRequest(ModelState.ErrorCount);
             }*/
             await OrderService.CreateOrderAsync(dto, GetId());
+            log.Info("Create order " + dto.ListFood);
             return Ok();
         }
         catch (Exception e)
         {
+            log.Error(e.Message);
             return BadRequest(e.Message);
         }
     }
