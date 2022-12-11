@@ -28,13 +28,13 @@ pipeline {
                 script {
                     sh "echo ${env:BUILD_NUMBER}"
                     sh 'dotnet build'
-                    sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
+                    sh "dotnet pack -p:PackageVersion=2.0.0"
                 }
             }
         }
         stage('Publish to Nexus repository') {
             steps {
-                sh "dotnet nuget push TakeFoodAPI/bin/Debug/TakeFoodAPI.0.${env:BUILD_NUMBER}.0.nupkg --api-key ${env:NEXUSKEY} --source ${env:NEXUSURL}"
+                sh "dotnet nuget push TakeFoodAPI/bin/Debug/TakeFoodAPI.2.0.0.nupkg --api-key ${env:NEXUSKEY} --source ${env:NEXUSURL}"
             }
         }
         stage('Devployment') {
