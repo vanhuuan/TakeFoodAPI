@@ -78,7 +78,7 @@ public class AuthenController : Controller
             rs.RefreshToken = refreshToken;
             rs.AccessToken = accessToken;
             SetTokenCookie(refreshToken, accessToken);
-            log.Info(rs.ToString());
+            log.Info(rs.ToJsonString());
             return Ok(rs);
         }
         catch (Exception e)
