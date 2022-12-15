@@ -36,6 +36,7 @@ public class AuthenController : Controller
             var rs = await UserService.CreateUserAsync(user);
             if (rs == null)
             {
+                log.Error("User existed");
                 throw new Exception("User existed");
             }
 
@@ -45,6 +46,7 @@ public class AuthenController : Controller
                         mail.To = user.Email;
                         mail.Body = url + "Active?token=" + accessToken;
                         await MailService.SendMail(mail);*/
+            log.Info(rs);
             return Ok();
         }
         catch (Exception e)
@@ -75,6 +77,7 @@ public class AuthenController : Controller
             rs.RefreshToken = refreshToken;
             rs.AccessToken = accessToken;
             SetTokenCookie(refreshToken, accessToken);
+            log.Info(rs);
             return Ok(rs);
         }
         catch (Exception e)
@@ -100,6 +103,7 @@ public class AuthenController : Controller
             var accessToken = JwtService.GenerateSecurityToken(id, rs.Roles);
             rs.AccessToken = accessToken;
             SetTokenCookie(token, accessToken);
+            log.Info(rs);
             return Ok(rs);
         }
         catch (Exception e)
