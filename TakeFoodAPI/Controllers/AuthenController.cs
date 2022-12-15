@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TakeFoodAPI.Service;
+using TakeFoodAPI.Utilities.Extension;
 using TakeFoodAPI.ViewModel.Dtos;
 using TakeFoodAPI.ViewModel.Dtos.User;
 
@@ -77,7 +78,7 @@ public class AuthenController : Controller
             rs.RefreshToken = refreshToken;
             rs.AccessToken = accessToken;
             SetTokenCookie(refreshToken, accessToken);
-            log.Info(rs);
+            log.Info(rs.ToString());
             return Ok(rs);
         }
         catch (Exception e)
