@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 using TakeFoodAPI.Middleware;
 using TakeFoodAPI.Service;
 using TakeFoodAPI.ViewModel.Dtos.Food;
@@ -20,11 +24,25 @@ namespace TakeFoodAPI.Controllers
 
         [HttpGet]
         [Route("test")]
-        public void Test()
+        public async void Test()
         {
-            log.Error("Food Not Found");
-            log.Info("This is log info");
+            var body =  await new StreamReader(Request.Body).ReadToEndAsync();
+            var logRequest = new LogInfo()
+            {
+                Type = "Request",
+                Url = Request.GetDisplayUrl(),
+                Body = body
+            };
+
+            var requestMessage = JsonSerializer.Serialize(logRequest);
+            log.Info(requestMessage);
+            logRequest.Type = "Response";
+            logRequest.Body = "Cai nay la body hoac la bo trong";
+            requestMessage = JsonSerializer.Serialize(logRequest);
+            log.Info(requestMessage);
         }
+
+
 
         [HttpPost("{StoreID}")]
         /*[Authorize(roles: Roles.ShopeOwner)]*/
@@ -95,5 +113,11 @@ namespace TakeFoodAPI.Controllers
                 return error;
             }
         }
+    }
+    public class LogInfo
+    {
+        public string Type { get; set; }
+        public string Url { get; set; }
+        public string Body { get; set; }
     }
 }
