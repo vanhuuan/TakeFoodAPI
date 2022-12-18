@@ -11,8 +11,8 @@ void setBuildStatus(String message, String state) {
 pipeline {
     agent any
     environment {
-        NEXUSKEY = '7cddf6c9-6328-30ff-9927-3f903fbf86f0'
-        NEXUSURL = 'http://20.205.40.63:8081/repository/nuget-hosted'
+        NEXUSKEY = 'ba9bc7f5-736c-32d0-aeed-91be0c416657'
+        NEXUSURL = 'http://20.189.73.152:8081/repository/nuget-hosted'
     }
 
     stages {
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 cleanWs()
                 setBuildStatus('Pending', 'PENDING')
-                git branch: 'develop', credentialsId: 'takefoodapi-github', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
+                git branch: 'main', credentialsId: '81e14ace-d249-4fda-ab32-fd6f3b0cb2a2', url: 'git@github.com:vanhuuan89/TakeFoodAPI.git'
             }
         }
         stage('Build and publish pack') {
@@ -28,13 +28,13 @@ pipeline {
                 script {
                     sh "echo ${env:BUILD_NUMBER}"
                     sh 'dotnet build'
-                    sh "dotnet pack -p:PackageVersion=0.${env:BUILD_NUMBER}.0"
+                    sh "dotnet pack -p:PackageVersion=2.1.0"
                 }
             }
         }
         stage('Publish to Nexus repository') {
             steps {
-                sh "dotnet nuget push TakeFoodAPI/bin/Debug/TakeFoodAPI.0.${env:BUILD_NUMBER}.0.nupkg --api-key ${env:NEXUSKEY} --source ${env:NEXUSURL}"
+                sh "dotnet nuget push TakeFoodAPI/bin/Debug/TakeFoodAPI.2.1.0.nupkg --api-key ${env:NEXUSKEY} --source ${env:NEXUSURL}"
             }
         }
         stage('Devployment') {
