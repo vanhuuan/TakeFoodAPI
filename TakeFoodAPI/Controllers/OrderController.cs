@@ -128,6 +128,7 @@ public class OrderController : Controller
         }
         catch (Exception e)
         {
+            SentrySdk.CaptureException(e);
             return BadRequest(e.Message);
         }
     }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Sentry;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using TakeFoodAPI.Middleware;
@@ -98,6 +99,7 @@ namespace TakeFoodAPI.Controllers
             {
                 Console.WriteLine(err.Message);
                 log.Error(err.Message);
+                SentrySdk.CaptureException(err);
                 throw;
             }
         }
@@ -152,6 +154,7 @@ namespace TakeFoodAPI.Controllers
             catch (Exception err)
             {
                 log.Error(err.Message);
+                SentrySdk.CaptureException(err);
                 return BadRequest(err.Message);
             }
         }

@@ -100,6 +100,7 @@ public class AuthenController : Controller
         catch (Exception e)
         {
             log.Error(e);
+            SentrySdk.CaptureException(e);
             return BadRequest(e.Message);
         }
     }
