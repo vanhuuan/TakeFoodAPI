@@ -9,7 +9,7 @@ namespace TakeFoodAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ToppingController : BaseController
+    public class ToppingController : Controller
     {
         public readonly IToppingService _toppingService;
 

@@ -1,13 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using log4net;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
+using Sentry;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using TakeFoodAPI.Hubs;
+using TakeFoodAPI.Middleware;
 using TakeFoodAPI.Service;
+using TakeFoodAPI.Utilities.Extension;
 using TakeFoodAPI.ViewModel.Dtos.Order;
 
 namespace TakeFoodAPI.Controllers;
 
-public class OrderController : BaseController
+public class OrderController : Controller
 {
     public IOrderService OrderService { get; set; }
     public IJwtService JwtService { get; set; }
@@ -20,23 +27,65 @@ public class OrderController : BaseController
         notificationUserHubContext = hubContext;
     }
 
+    public async void LogStart()
+    {
+        var body = await new StreamReader(Request.Body).ReadToEndAsync();
+        var logRequest = new LogInfo()
+        {
+            Type = "Request",
+            Url = Request.GetDisplayUrl(),
+            Body = body
+        };
+
+        var requestMessage = JsonSerializer.Serialize(logRequest);
+        GlobalContext.Properties["REQUEST_TYPE"] = "Request";
+        GlobalContext.Properties["URL"] = Request.GetDisplayUrl();
+        if (!body.IsNullOrEmpty())
+        {
+            GlobalContext.Properties["BODY"] = body;
+        }
+        log.Info(requestMessage);
+    }
+
+    public async void LogEnd(string body)
+    {
+        var logRequest = new LogInfo()
+        {
+            Type = "Response",
+            Url = Request.GetDisplayUrl(),
+            Body = body
+        };
+        logRequest.Type = "Response";
+        logRequest.Body = body;
+        GlobalContext.Properties["REQUEST_TYPE"] = "Response";
+        GlobalContext.Properties["URL"] = Request.GetDisplayUrl();
+        if (!body.IsNullOrEmpty())
+        {
+            GlobalContext.Properties["BODY"] = body;
+        }
+        var requestMessage = JsonSerializer.Serialize(logRequest);
+        log.Info(requestMessage);
+    }
+
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [Route("CreateOrder")]
     public async Task<IActionResult> AddOrderAsync([FromBody] CreateOrderDto dto)
     {
         try
         {
-            /*if (!ModelState.IsValid)
+            LogStart();
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.ErrorCount);
-            }*/
+            }
             await OrderService.CreateOrderAsync(dto, GetId());
-            log.Info("Create order " + dto.ListFood);
+            LogEnd("");
             return Ok();
         }
         catch (Exception e)
         {
+            SentrySdk.CaptureException(e);
             log.Error(e.Message);
             return BadRequest(e.Message);
         }
@@ -62,16 +111,19 @@ public class OrderController : BaseController
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GetOrders")]
     public async Task<IActionResult> GetOrdersAsync([Required] int index)
     {
         try
         {
+            LogStart();
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
             var rs = await OrderService.GetUserOrders(GetId(), index);
+            LogEnd(rs.ToJsonString());
             return Ok(rs);
         }
         catch (Exception e)
@@ -86,11 +138,13 @@ public class OrderController : BaseController
     {
         try
         {
+            LogStart();
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
             var rs = await OrderService.GetOrderDetail(GetId(), orderId);
+            LogEnd(rs.ToJsonString());
             return Ok(rs);
         }
         catch (Exception e)

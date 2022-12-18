@@ -1,6 +1,10 @@
+using log4net;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
+using MongoDB.Driver.Core.WireProtocol.Messages;
+using Sentry;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
@@ -22,11 +26,9 @@ namespace TakeFoodAPI.Controllers
             _FoodService = foodService;
         }
 
-        [HttpGet]
-        [Route("test")]
-        public async void Test()
+        public async void LogStart()
         {
-            var body =  await new StreamReader(Request.Body).ReadToEndAsync();
+            var body = await new StreamReader(Request.Body).ReadToEndAsync();
             var logRequest = new LogInfo()
             {
                 Type = "Request",
@@ -35,13 +37,34 @@ namespace TakeFoodAPI.Controllers
             };
 
             var requestMessage = JsonSerializer.Serialize(logRequest);
-            log.Info(requestMessage);
-            logRequest.Type = "Response";
-            logRequest.Body = "Cai nay la body hoac la bo trong";
-            requestMessage = JsonSerializer.Serialize(logRequest);
+            GlobalContext.Properties["REQUEST_TYPE"] = "Request";
+            GlobalContext.Properties["URL"] = Request.GetDisplayUrl();
+            if (!body.IsNullOrEmpty())
+            {
+                GlobalContext.Properties["BODY"] = body;
+            }
             log.Info(requestMessage);
         }
 
+        public async void LogEnd(string body)
+        {
+                var logRequest = new LogInfo()
+                {
+                    Type = "Response",
+                    Url = Request.GetDisplayUrl(),
+                    Body = body
+                };
+                logRequest.Type = "Response";
+                logRequest.Body = body;
+                GlobalContext.Properties["REQUEST_TYPE"] = "Response";
+                GlobalContext.Properties["URL"] = Request.GetDisplayUrl();
+                if (!body.IsNullOrEmpty())
+                {
+                    GlobalContext.Properties["BODY"] = body;
+                }
+                var requestMessage = JsonSerializer.Serialize(logRequest);
+                log.Info(requestMessage);
+        }
 
 
         [HttpPost("{StoreID}")]
@@ -102,14 +125,17 @@ namespace TakeFoodAPI.Controllers
         {
             try
             {
+                LogStart();
                 FoodViewMobile fMoble = await _FoodService.GetFoodByID(FoodID);
                 var food = new JsonResult(fMoble);
+                LogEnd(food.Value.ToString());
                 return food;
             }
             catch (Exception e)
             {
                 log.Error(e.Message);
                 JsonResult error = new(e.Message);
+                SentrySdk.CaptureException(e);
                 return error;
             }
         }
