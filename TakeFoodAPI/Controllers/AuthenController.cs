@@ -11,7 +11,7 @@ public class AuthenController : Controller
 {
     // private string url = "https://localhost:7287/";
 
-    private string url = "https://takefoodauthentication.azurewebsites.net/";
+    private string url = "https://takefood-authentication.azurewebsites.net/";
     public IUserService UserService { get; set; }
 
     public IJwtService JwtService { get; set; }
