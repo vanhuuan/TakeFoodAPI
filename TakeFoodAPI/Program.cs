@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.   
 
-
+builder.WebHost.UseSentry();
 Startup startup = new(builder.Environment);
 startup.ConfigureServices(builder.Services);
 builder.Services.AddControllers();

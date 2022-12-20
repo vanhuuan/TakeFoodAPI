@@ -1,5 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using log4net;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Sentry;
+using Serilog;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using TakeFoodAPI.Service;
 using TakeFoodAPI.Utilities.Extension;
 using TakeFoodAPI.ViewModel.Dtos;
@@ -12,7 +18,7 @@ public class AuthenController : Controller
 {
     // private string url = "https://localhost:7287/";
 
-    private string url = "https://takefoodauthentication.azurewebsites.net/";
+    private string url = "https://takefood-authentication.azurewebsites.net/";
     public IUserService UserService { get; set; }
 
     public IJwtService JwtService { get; set; }
@@ -24,12 +30,53 @@ public class AuthenController : Controller
         JwtService = jwtService;
     }
 
+    public async void LogStart()
+    {
+        var body = await new StreamReader(Request.Body).ReadToEndAsync();
+        var logRequest = new LogInfo()
+        {
+            Type = "Request",
+            Url = Request.GetDisplayUrl(),
+            Body = body
+        };
+
+        var requestMessage = JsonSerializer.Serialize(logRequest);
+        GlobalContext.Properties["REQUEST_TYPE"] = "Request";
+        GlobalContext.Properties["URL"] = Request.GetDisplayUrl();
+        if (!body.IsNullOrEmpty())
+        {
+            GlobalContext.Properties["BODY"] = body;
+        }
+        log.Info(requestMessage);
+    }
+
+    public async void LogEnd(string body)
+    {
+        var logRequest = new LogInfo()
+        {
+            Type = "Response",
+            Url = Request.GetDisplayUrl(),
+            Body = body
+        };
+        logRequest.Type = "Response";
+        logRequest.Body = body;
+        GlobalContext.Properties["REQUEST_TYPE"] = "Response";
+        GlobalContext.Properties["URL"] = Request.GetDisplayUrl();
+        if (!body.IsNullOrEmpty())
+        {
+            GlobalContext.Properties["BODY"] = body;
+        }
+        var requestMessage = JsonSerializer.Serialize(logRequest);
+        log.Info(requestMessage);
+    }
+
     [HttpPost]
     [Route("SignUp")]
     public async Task<ActionResult<UserViewDto>> SignUpAsync([FromBody] CreateUserDto user)
     {
         try
         {
+            LogStart();
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -47,12 +94,13 @@ public class AuthenController : Controller
                         mail.To = user.Email;
                         mail.Body = url + "Active?token=" + accessToken;
                         await MailService.SendMail(mail);*/
-            log.Info(rs);
+            LogEnd("");
             return Ok();
         }
         catch (Exception e)
         {
             log.Error(e);
+            SentrySdk.CaptureException(e);
             return BadRequest(e.Message);
         }
     }
@@ -63,6 +111,7 @@ public class AuthenController : Controller
     {
         try
         {
+            LogStart(); 
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -78,13 +127,14 @@ public class AuthenController : Controller
             rs.RefreshToken = refreshToken;
             rs.AccessToken = accessToken;
             SetTokenCookie(refreshToken, accessToken);
-            log.Info(rs.ToJsonString());
+            LogEnd(rs.ToJsonString());
             return Ok(rs);
         }
         catch (Exception e)
         {
             log.Error(e);
             Console.WriteLine(e.ToString());
+            SentrySdk.CaptureException(e);
             return BadRequest(e.Message);
         }
     }

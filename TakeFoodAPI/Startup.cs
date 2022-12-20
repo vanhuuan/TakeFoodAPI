@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using TakeFoodAPI.Extension;
 using TakeFoodAPI.Hubs;
+using TakeFoodAPI.Middleware;
 using TakeFoodAPI.Model.Entities.Address;
 using TakeFoodAPI.Model.Entities.Category;
 using TakeFoodAPI.Model.Entities.Food;
@@ -166,6 +167,7 @@ public class Startup
         services.AddScoped<IFoodService, FoodService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IToppingService, ToppingService>();
+        services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<ITakeFoodAPI, TakeFoodAPI.Service.Implement.TakeFoodAPI>();
         services.AddScoped<IJwtService, JwtService>(x => new JwtService(x.GetRequiredService<IMongoRepository<UserRefreshToken>>()
@@ -199,7 +201,7 @@ public class Startup
             });
             app.UseRouting();
 
-            // app.UseMiddleware<UserMiddleware>();
+            app.UseMiddleware<AuthenticationMiddleware>();
 
             app.UseDefaultFiles();
 

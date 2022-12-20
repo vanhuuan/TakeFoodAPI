@@ -5,7 +5,7 @@ using TakeFoodAPI.ViewModel.Dtos.Review;
 
 namespace TakeFoodAPI.Controllers
 {
-    public class ReviewController : BaseController
+    public class ReviewController : Controller
     {
         public IReviewService ReviewService { get; set; }
         public IJwtService JwtService { get; set; }
